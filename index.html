@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>subhuxfr</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body oncontextmenu="return false">
+
+  <canvas id="snow-canvas"></canvas>
+
+  <div id="preloader">
+    <div class="loader"></div>
+  </div>
+
+  <div class="container fade-in">
+    <img class="profile-pic" src="assets/profile.png" alt="Profile" oncontextmenu="return false" draggable="false">
+
+    <!-- Username -->
+    <h1 class="username gradient-shine" data-text="subhuxfr">subhuxfr</h1>
+
+    <!-- Tagline -->
+    <p class="tagline typewriter flicker">IM THE HONOURED ONE</p>
+
+    <div class="socials">
+      <a href="https://discord.gg/M5ypD3N5Vx" target="_blank"><i class="fab fa-discord"></i></a>
+      <a href="https://t.me/toxic_029" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+      <a href="mailto:zennintoji29@gmail.com"><i class="fas fa-envelope"></i></a>
+    </div>
+
+    <button id="playBtn">🔊 Play Music</button>
+    <audio id="bgMusic" loop>
+      <source src="assets/lofi.mp3" type="audio/mpeg">
+    </audio>
+
+    <a href="about.html" class="back-link">👤 About Me</a>
+
+    <div class="fade-in">...</div>
+  </div>
+
+  <div id="tsparticles"></div>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.1.0/tsparticles.bundle.min.js"></script>
+
+  <script>
+    // Particle background
+    tsParticles.load("tsparticles", {
+      background: { color: { value: "transparent" } },
+      particles: {
+        number: { value: 50 },
+        size: { value: 2 },
+        color: { value: "#00ffff" },
+        move: { enable: true, speed: 1 }
+      }
+    });
+
+    // Fade-in animation
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    });
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Music
+    const music = document.getElementById("bgMusic");
+    const playBtn = document.getElementById("playBtn");
+    playBtn.addEventListener("click", () => {
+      music.play();
+      playBtn.style.display = "none";
+    });
+
+    // Preloader
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('preloader');
+      loader.style.opacity = '0';
+      loader.style.visibility = 'hidden';
+    });
+
+    // Snow
+    const canvas = document.getElementById("snow-canvas");
+    const ctx = canvas.getContext("2d");
+    let flakes = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function createFlakes() {
+      for (let i = 0; i < 100; i++) {
+        flakes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 4 + 1,
+          d: Math.random() + 1
+        });
+      }
+    }
+    createFlakes();
+
+    function drawFlakes() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      for (let i = 0; i < flakes.length; i++) {
+        let f = flakes[i];
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+      }
+      ctx.fill();
+      moveFlakes();
+    }
+
+    let angle = 0;
+    function moveFlakes() {
+      angle += 0.01;
+      for (let i = 0; i < flakes.length; i++) {
+        let f = flakes[i];
+        f.y += Math.pow(f.d, 2) + 1;
+        f.x += Math.sin(angle) * 2;
+        if (f.y > canvas.height) {
+          flakes[i] = {
+            x: Math.random() * canvas.width,
+            y: 0,
+            r: f.r,
+            d: f.d
+          };
+        }
+      }
+    }
+    setInterval(drawFlakes, 25);
+  </script>
+</body>
+</html>
